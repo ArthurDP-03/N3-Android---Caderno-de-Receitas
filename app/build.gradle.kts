@@ -1,24 +1,27 @@
 plugins {
-    alias(libs.plugins.android.application)
-    alias(libs.plugins.kotlin.android)
-    alias(libs.plugins.kotlin.compose)
-
-    // PLUGINS DO PROFESSOR (AGORA VAI FUNCIONAR)
-    kotlin("kapt")
+    // Plugins que você definiu no raiz
+    id("com.android.application")
+    id("org.jetbrains.kotlin.android")
+    id("org.jetbrains.kotlin.plugin.compose")
     id("com.google.dagger.hilt.android")
+    id("org.jetbrains.kotlin.kapt")
 }
+
 android {
-    namespace = "br.com.cadernoreceitas" //
-    compileSdk = 36
+    namespace = "br.com.meuapp" // Mude para o seu namespace
+    compileSdk = 34
 
     defaultConfig {
-        applicationId = "br.com.cadernoreceitas" //
-        minSdk = 24
-        targetSdk = 36
+        applicationId = "br.com.meuapp" // Mude para o seu ID
+        minSdk = 26
+        targetSdk = 34
         versionCode = 1
         versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+        vectorDrawables {
+            useSupportLibrary = true
+        }
     }
 
     buildTypes {
@@ -30,63 +33,62 @@ android {
             )
         }
     }
+
+    // Configura o Java 17 (necessário para o AGP 8+)
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_11
-        targetCompatibility = JavaVersion.VERSION_11
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
     }
+
+    // Configura as opções do Kotlin
     kotlinOptions {
-        jvmTarget = "11"
+        jvmTarget = "17"
     }
-    buildFeatures {
-        compose = true
+
+    // ATENÇÃO:
+    // Como estamos usando o novo `org.jetbrains.kotlin.plugin.compose` (do seu raiz),
+    // NÃO precisamos mais dos blocos `buildFeatures { compose = true }`
+    // nem `composeOptions { ... }`. O plugin já cuida disso.
+
+    packaging {
+        resources {
+            excludes += "/META-INF/{AL2.0,LGPL2.1}"
+        }
     }
 }
 
 dependencies {
-    // Dependências base (corretas)
+    // Dependências principais do AndroidX
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.activity.compose)
-    implementation(platform(libs.androidx.compose.bom))
-    implementation(libs.androidx.ui)
-    implementation(libs.androidx.ui.graphics)
-    implementation(libs.androidx.ui.tooling.preview)
-    implementation(libs.androidx.material3)
 
-    // Dependências do Professor (LiveData)
-    // implementation(libs.androidx.runtime.livedata) // <-- 1. APAGUE ESTA LINHA
-    implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.8.6") // <-- MANTENHA ESTA (está correta)
+    // Jetpack Compose (BOM)
+    implementation(platform(libs.compose.bom))
+    implementation(libs.compose.ui)
+    implementation(libs.compose.ui.graphics)
+    implementation(libs.compose.ui.tooling.preview)
+    implementation(libs.compose.material3)
 
-    // Room (R2)
-    implementation("androidx.room:room-runtime:2.6.1")
-    implementation("androidx.room:room-ktx:2.6.1")
-    kapt("androidx.room:room-compiler:2.6.1") // <-- Isso vai parar de dar erro
+    // Hilt (Injeção de Dependência)
+    // As bibliotecas vêm do 'toml'
+    implementation(libs.hilt.android)
+    // O Kapt usa o compilador do 'toml'
+    kapt(libs.hilt.compiler)
 
-    // Lifecycle + ViewModel (R3)
-    implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.8.6")
-    implementation("androidx.lifecycle:lifecycle-runtime-compose:2.8.6")
-    implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.8.6")
-
-    // Navigation Compose (R1)
-    // implementation(libs.androidx.navigation.compose) // <-- 2. APAGUE ESTA LINHA
-    implementation("androidx.navigation:navigation-compose:2.8.2") // <-- MANTENHA ESTA (está correta)
-
-    // Hilt (R4)
-    implementation("com.google.dagger:hilt-android:2.52")
-    kapt("com.google.dagger:hilt-compiler:2.52") // <-- Isso vai parar de dar erro
-    implementation("androidx.hilt:hilt-navigation-compose:1.2.0")
-
-    // Gson (Mantenha, você precisa dela para os Converters)
-    implementation("com.google.code.gson:gson:2.10.1")
-
-    // Testes
+    // Dependências de Teste
     testImplementation(libs.junit)
-    androidTestImplementation(libs.androidx.junit)
+    androidTestImplementation(libs.androidx.test.junit)
     androidTestImplementation(libs.androidx.espresso.core)
-    androidTestImplementation(platform(libs.androidx.compose.bom))
-    androidTestImplementation(libs.androidx.ui.test.junit4)
-    debugImplementation(libs.androidx.ui.tooling)
-    debugImplementation(libs.androidx.ui.test.manifest)
+    androidTestImplementation(platform(libs.compose.bom))
+    androidTestImplementation(libs.compose.ui.test.junit4)
+
+    // Debug (Compose)
+    debugImplementation(libs.compose.ui.tooling)
+    debugImplementation(libs.compose.ui.test.manifest)
 }
 
-
+// Configuração específica do Kapt (necessária para o Hilt)
+kapt {
+    correctErrorTypes = true
+}
