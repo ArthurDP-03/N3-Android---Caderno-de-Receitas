@@ -1,8 +1,8 @@
 [versions]
 # Gradle e Kotlin
-androidGradlePlugin = "8.4.1"
+androidGradlePlugin = "8.13.0"
 kotlin = "2.0.21"
-ksp = { id = "com.google.devtools.ksp", version = "2.0.0-1.0.21" }
+ksp = { id = "com.google.devtools.ksp", version = "2.0.21-1.0.25" }
 
 # Hilt (Biblioteca)
 hilt = "2.51.1"

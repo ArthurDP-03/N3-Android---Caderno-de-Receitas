@@ -7,5 +7,5 @@ plugins {
     id("com.google.dagger.hilt.android") version "2.51.1" apply false
 
     // MUDANÇA: A linha 'kotlin("kapt") version "2.0.21" apply false' foi substituída pela linha abaixo
-    id("com.google.devtools.ksp") version "2.0.0-1.0.21" apply false
+    id("com.google.devtools.ksp") version "2.0.21-1.0.25" apply false
 }
