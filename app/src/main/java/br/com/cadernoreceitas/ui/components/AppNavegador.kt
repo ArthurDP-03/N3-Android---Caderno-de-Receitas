@@ -1,6 +1,5 @@
 package br.com.cadernoreceitas.ui.components
 
-import android.R.attr.type
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
@@ -10,16 +9,21 @@ import androidx.navigation.navArgument
 import br.com.cadernoreceitas.ui.screens.AddEditRecipeScreen
 import br.com.cadernoreceitas.ui.screens.NotebookListScreen
 import br.com.cadernoreceitas.ui.screens.RecipeDetailScreen
-import br.com.cadernoreceitas.ui.screens.RecipeListScreen
+// import br.com.cadernoreceitas.ui.screens.RecipeListScreen // Não é mais necessária
 
 object Routes {
     const val NOTEBOOK_LIST = "notebookList"
-    const val RECIPE_LIST = "recipeList/{notebookId}"
-    fun recipeListRoute(notebookId: Long) = "recipeList/$notebookId"
+
+    // Rota RECIPE_LIST foi removida, pois a funcionalidade agora está na NOTEBOOK_LIST
+    // const val RECIPE_LIST = "recipeList/{notebookId}"
+    // fun recipeListRoute(notebookId: Long) = "recipeList/$notebookId"
+
     const val RECIPE_DETAIL = "recipeDetail/{recipeId}"
     fun recipeDetailRoute(recipeId: Long) = "recipeDetail/$recipeId"
+
     const val ADD_RECIPE = "addRecipe/{notebookId}"
     fun addRecipeRoute(notebookId: Long) = "addRecipe/$notebookId"
+
     const val EDIT_RECIPE = "editRecipe/{recipeId}"
     fun editRecipeRoute(recipeId: Long) = "editRecipe/$recipeId"
 }
@@ -31,11 +35,18 @@ fun AppNavegador() {
     NavHost(navController = navController, startDestination = Routes.NOTEBOOK_LIST) {
         composable(Routes.NOTEBOOK_LIST) {
             NotebookListScreen(
-                onNavigateToRecipeList = { notebookId ->
-                    navController.navigate(Routes.recipeListRoute(notebookId))
+                onNavigateToRecipeDetail = { recipeId ->
+                    navController.navigate(Routes.recipeDetailRoute(recipeId))
+                },
+                onNavigateToAddRecipe = { notebookId ->
+                    navController.navigate(Routes.addRecipeRoute(notebookId))
                 }
             )
         }
+
+        /*
+        // Rota não é mais necessária, pois a lista de receitas
+        // agora é exibida na NotebookListScreen.
         composable(
             route = Routes.RECIPE_LIST,
             arguments = listOf(navArgument("notebookId") { type = NavType.LongType })
@@ -51,6 +62,8 @@ fun AppNavegador() {
                 }
             )
         }
+        */
+
         composable(
             route = Routes.RECIPE_DETAIL,
             arguments = listOf(navArgument("recipeId") { type = NavType.LongType })
