@@ -8,11 +8,13 @@ plugins {
 }
 
 android {
-    namespace = "br.com.meuapp" // Mude para o seu namespace
+    // Mude "br.com.meuapp" para o namespace real do seu app (ex: "br.com.cadernoreceitas")
+    namespace = "br.com.cadernoreceitas"
     compileSdk = 34
 
     defaultConfig {
-        applicationId = "br.com.meuapp" // Mude para o seu ID
+        // Mude "br.com.meuapp" para o ID real do seu app (ex: "br.com.cadernoreceitas")
+        applicationId = "br.com.cadernoreceitas"
         minSdk = 26
         targetSdk = 34
         versionCode = 1
@@ -45,10 +47,9 @@ android {
         jvmTarget = "17"
     }
 
-    // ATENÇÃO:
-    // Como estamos usando o novo `org.jetbrains.kotlin.plugin.compose` (do seu raiz),
-    // NÃO precisamos mais dos blocos `buildFeatures { compose = true }`
-    // nem `composeOptions { ... }`. O plugin já cuida disso.
+    // O plugin `org.jetbrains.kotlin.plugin.compose` já cuida disso.
+    // buildFeatures { compose = true }
+    // composeOptions { ... }
 
     packaging {
         resources {
@@ -71,10 +72,16 @@ dependencies {
     implementation(libs.compose.material3)
 
     // Hilt (Injeção de Dependência)
-    // As bibliotecas vêm do 'toml'
     implementation(libs.hilt.android)
-    // O Kapt usa o compilador do 'toml'
     kapt(libs.hilt.compiler)
+
+    // ADICIONE O ROOM (Banco de Dados)
+    implementation(libs.androidx.room.runtime)
+    implementation(libs.androidx.room.ktx) // Para suporte a Flow/Coroutines
+    kapt(libs.androidx.room.compiler)      // O processador de anotações que faltava
+
+    // ADICIONE O GSON (Para os Type Converters)
+    implementation(libs.gson)
 
     // Dependências de Teste
     testImplementation(libs.junit)
