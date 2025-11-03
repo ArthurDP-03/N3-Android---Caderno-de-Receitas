@@ -4,19 +4,19 @@ plugins {
     id("org.jetbrains.kotlin.android")
     id("org.jetbrains.kotlin.plugin.compose")
     id("com.google.dagger.hilt.android")
-    id("org.jetbrains.kotlin.kapt")
+
+    // MUDANÇA: A linha 'id("org.jetbrains.kotlin.kapt")' foi substituída pela linha abaixo
+    id("com.google.devtools.ksp")
 }
 
 android {
-    // Mude "br.com.meuapp" para o namespace real do seu app (ex: "br.com.cadernoreceitas")
-    namespace = "br.com.cadernoreceitas"
-    compileSdk = 35
+    namespace = "br.com.meuapp" // Mude para o seu namespace
+    compileSdk = 34
 
     defaultConfig {
-        // Mude "br.com.meuapp" para o ID real do seu app (ex: "br.com.cadernoreceitas")
-        applicationId = "br.com.cadernoreceitas"
+        applicationId = "br.com.meuapp" // Mude para o seu ID
         minSdk = 26
-        targetSdk = 35
+        targetSdk = 34
         versionCode = 1
         versionName = "1.0"
 
@@ -47,9 +47,11 @@ android {
         jvmTarget = "17"
     }
 
-    // O plugin `org.jetbrains.kotlin.plugin.compose` já cuida disso.
-    // buildFeatures { compose = true }
-    // composeOptions { ... }
+    // ATENÇÃO:
+    // Como estamos usando o novo `org.jetbrains.kotlin.plugin.compose` (do seu raiz),
+    // NÃO precisamos mais dos blocos `buildFeatures { compose = true }`
+    // nem `composeOptions { ... }`.
+    // O plugin já cuida disso.
 
     packaging {
         resources {
@@ -72,17 +74,11 @@ dependencies {
     implementation(libs.compose.material3)
 
     // Hilt (Injeção de Dependência)
+    // As bibliotecas vêm do 'toml'
     implementation(libs.hilt.android)
-    implementation(libs.androidx.navigation.compose)
-    kapt(libs.hilt.compiler)
 
-    // ADICIONE O ROOM (Banco de Dados)
-    implementation(libs.androidx.room.runtime)
-    implementation(libs.androidx.room.ktx) // Para suporte a Flow/Coroutines
-    kapt(libs.androidx.room.compiler)      // O processador de anotações que faltava
-
-    // ADICIONE O GSON (Para os Type Converters)
-    implementation(libs.gson)
+    // MUDANÇA: A linha 'kapt(libs.hilt.compiler)' foi substituída pela linha abaixo
+    ksp(libs.hilt.compiler)
 
     // Dependências de Teste
     testImplementation(libs.junit)
@@ -96,7 +92,4 @@ dependencies {
     debugImplementation(libs.compose.ui.test.manifest)
 }
 
-// Configuração específica do Kapt (necessária para o Hilt)
-kapt {
-    correctErrorTypes = true
-}
+// MUDANÇA: O bloco 'kapt { ... }' foi removido

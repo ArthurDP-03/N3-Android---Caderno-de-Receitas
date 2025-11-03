@@ -1,7 +1,8 @@
 [versions]
 # Gradle e Kotlin
-androidGradlePlugin = "8.6.0"
+androidGradlePlugin = "8.4.1"
 kotlin = "2.0.21"
+ksp = { id = "com.google.devtools.ksp", version = "2.0.0-1.0.21" }
 
 # Hilt (Biblioteca)
 hilt = "2.51.1"
@@ -18,11 +19,6 @@ composeBom = "2024.05.00"
 junit = "4.13.2"
 androidxTestJunit = "1.1.5"
 espressoCore = "3.5.1"
-
-# ADICIONE ESTAS VERSÕES
-room = "2.6.1"
-gson = "2.10.1"
-navigationCompose = "2.9.5"
 
 
 [libraries]
@@ -44,20 +40,11 @@ compose-ui-test-manifest = { group = "androidx.compose.ui", name = "ui-test-mani
 hilt-android = { group = "com.google.dagger", name = "hilt-android", version.ref = "hilt" }
 hilt-compiler = { group = "com.google.dagger", name = "hilt-compiler", version.ref = "hilt" }
 
-# ADICIONE O ROOM
-androidx-room-runtime = { group = "androidx.room", name = "room-runtime", version.ref = "room" }
-androidx-room-ktx = { group = "androidx.room", name = "room-ktx", version.ref = "room" }
-androidx-room-compiler = { group = "androidx.room", name = "room-compiler", version.ref = "room" }
-
-# ADICIONE O GSON (para os Converters)
-gson = { group = "com.google.code.gson", name = "gson", version.ref = "gson" }
-
 # Testes
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 androidx-test-junit = { group = "androidx.test.ext", name = "junit", version.ref = "androidxTestJunit" }
 androidx-espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espressoCore" }
 compose-ui-test-junit4 = { group = "androidx.compose.ui", name = "ui-test-junit4" }
-androidx-navigation-compose = { group = "androidx.navigation", name = "navigation-compose", version.ref = "navigationCompose" }
 
 
 [plugins]
@@ -65,6 +52,7 @@ androidx-navigation-compose = { group = "androidx.navigation", name = "navigatio
 android-application = { id = "com.android.application", version.ref = "androidGradlePlugin" }
 kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 kotlin-compose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
+ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" } # <-- MUDANÇA: Adicionada esta linha
 
 # Os plugins do Hilt e Kapt são omitidos daqui,
-# pois você os definiu manually no build.gradle.kts raiz
+# pois você os definiu manualmente no build.gradle.kts raiz
