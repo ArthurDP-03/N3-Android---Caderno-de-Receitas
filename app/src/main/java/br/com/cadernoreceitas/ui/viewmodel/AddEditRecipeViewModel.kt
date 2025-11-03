@@ -3,6 +3,7 @@ package br.com.cadernoreceitas.ui.viewmodel
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import br.com.cadernoreceitas.data.model.Ingredient
 import br.com.cadernoreceitas.data.model.Recipe
 import br.com.cadernoreceitas.data.repository.ReceitasRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -37,7 +38,9 @@ class AddEditRecipeViewModel @Inject constructor(
                     it.copy(
                         name = recipe.name,
                         description = recipe.description,
-                        ingredients = recipe.ingredients.joinToString("\n"),
+                        // ATUALIZADO: Carrega a lista de ingredientes
+                        ingredients = recipe.ingredients.ifEmpty { listOf(Ingredient()) },
+                        // ATUALIZADO: Junta os passos com quebra de linha
                         steps = recipe.steps.joinToString("\n")
                     )
                 }
@@ -47,18 +50,58 @@ class AddEditRecipeViewModel @Inject constructor(
 
     fun onNameChange(name: String) = _uiState.update { it.copy(name = name) }
     fun onDescriptionChange(description: String) = _uiState.update { it.copy(description = description) }
-    fun onIngredientsChange(ingredients: String) = _uiState.update { it.copy(ingredients = ingredients) }
     fun onStepsChange(steps: String) = _uiState.update { it.copy(steps = steps) }
+
+    // --- NOVAS Funções para Ingredientes ---
+
+    fun onIngredientChange(index: Int, qty: String, unit: String, name: String) {
+        _uiState.update { currentState ->
+            val newIngredients = currentState.ingredients.toMutableList()
+            newIngredients[index] = Ingredient(qty, unit, name)
+            currentState.copy(ingredients = newIngredients)
+        }
+    }
+
+    fun onAddIngredient() {
+        _uiState.update { currentState ->
+            val newIngredients = currentState.ingredients.toMutableList().apply {
+                add(Ingredient())
+            }
+            currentState.copy(ingredients = newIngredients)
+        }
+    }
+
+    fun onRemoveIngredient(index: Int) {
+        _uiState.update { currentState ->
+            val newIngredients = currentState.ingredients.toMutableList().apply {
+                removeAt(index)
+            }
+            // Garante que sempre haja pelo menos um campo, mesmo que vazio
+            if (newIngredients.isEmpty()) {
+                newIngredients.add(Ingredient())
+            }
+            currentState.copy(ingredients = newIngredients)
+        }
+    }
+
+    // --- Fim das Novas Funções ---
 
     fun saveRecipe(onSaveFinished: () -> Unit) {
         viewModelScope.launch {
             val currentState = _uiState.value
             val recipe = Recipe(
                 recipeId = if (isEditing) recipeId else 0,
-                notebookId = if (isEditing) repository.getRecipeById(recipeId).firstOrNull()?.notebookId ?: 0 else notebookId,
+                // Corrigido: Busca o notebookId correto ao editar
+                notebookId = if (isEditing) {
+                    repository.getRecipeById(recipeId).firstOrNull()?.notebookId ?: 0
+                } else {
+                    notebookId
+                },
                 name = currentState.name,
                 description = currentState.description,
-                ingredients = currentState.ingredients.split("\n").filter { it.isNotBlank() },
+                // ATUALIZADO: Filtra ingredientes vazios
+                ingredients = currentState.ingredients.filter { it.name.isNotBlank() },
+                // ATUALIZADO: Salva os passos
                 steps = currentState.steps.split("\n").filter { it.isNotBlank() }
             )
             repository.insertRecipe(recipe)
@@ -70,6 +113,7 @@ class AddEditRecipeViewModel @Inject constructor(
 data class AddEditRecipeUiState(
     val name: String = "",
     val description: String = "",
-    val ingredients: String = "",
+    // ATUALIZADO: O estado agora é uma lista de ingredientes
+    val ingredients: List<Ingredient> = listOf(Ingredient()),
     val steps: String = ""
 )

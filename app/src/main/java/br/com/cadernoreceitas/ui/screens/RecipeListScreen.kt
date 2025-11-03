@@ -1,77 +1,92 @@
 package br.com.cadernoreceitas.ui.screens
 
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.Add
-import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
-import br.com.cadernoreceitas.data.model.Recipe
-import br.com.cadernoreceitas.ui.viewmodel.RecipeListViewModel
+import androidx.navigation.NavType
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
+import br.com.cadernoreceitas.ui.screens.AddEditRecipeScreen
+import br.com.cadernoreceitas.ui.screens.NotebookListScreen
+import br.com.cadernoreceitas.ui.screens.RecipeDetailScreen
+// import br.com.cadernoreceitas.ui.screens.RecipeListScreen // Não é mais necessária
 
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun RecipeListScreen(
-    viewModel: RecipeListViewModel = hiltViewModel(),
-    onNavigateBack: () -> Unit,
-    onNavigateToRecipeDetail: (Long) -> Unit,
-    onNavigateToAddRecipe: () -> Unit
-) {
-    val recipes by viewModel.recipes.collectAsState()
-    val notebook by viewModel.notebook.collectAsState()
+object Routes {
+    const val NOTEBOOK_LIST = "notebookList"
 
-    Scaffold(
-        topBar = {
-            TopAppBar(
-                title = { Text(notebook?.name ?: "Receitas") },
-                navigationIcon = {
-                    IconButton(onClick = onNavigateBack) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, "Voltar")
-                    }
-                }
-            )
-        },
-        floatingActionButton = {
-            FloatingActionButton(onClick = onNavigateToAddRecipe) {
-                Icon(Icons.Default.Add, "Adicionar Receita")
-            }
-        }
-    ) { padding ->
-        LazyColumn(
-            modifier = Modifier.fillMaxSize().padding(padding),
-            contentPadding = PaddingValues(16.dp),
-            verticalArrangement = Arrangement.spacedBy(16.dp)
-        ) {
-            item {
-                Text(
-                    "Qual será o prato de hoje?",
-                    style = MaterialTheme.typography.headlineSmall,
-                    modifier = Modifier.padding(bottom = 8.dp)
-                )
-            }
-            items(recipes) { recipe ->
-                RecipeItem(recipe = recipe, onClick = {
-                    onNavigateToRecipeDetail(recipe.recipeId)
-                })
-            }
-        }
-    }
+    // Rota RECIPE_LIST foi removida, pois a funcionalidade agora está na NOTEBOOK_LIST
+    // const val RECIPE_LIST = "recipeList/{notebookId}"
+    // fun recipeListRoute(notebookId: Long) = "recipeList/$notebookId"
+
+    const val RECIPE_DETAIL = "recipeDetail/{recipeId}"
+    fun recipeDetailRoute(recipeId: Long) = "recipeDetail/$recipeId"
+
+    const val ADD_RECIPE = "addRecipe/{notebookId}"
+    fun addRecipeRoute(notebookId: Long) = "addRecipe/$notebookId"
+
+    const val EDIT_RECIPE = "editRecipe/{recipeId}"
+    fun editRecipeRoute(recipeId: Long) = "editRecipe/$recipeId"
 }
 
 @Composable
-fun RecipeItem(recipe: Recipe, onClick: () -> Unit) {
-    Card(modifier = Modifier.fillMaxWidth().clickable(onClick = onClick)) {
-        Column(modifier = Modifier.padding(16.dp)) {
-            Text(recipe.name, style = MaterialTheme.typography.titleLarge)
-            Text(recipe.description, style = MaterialTheme.typography.bodyMedium)
+fun AppNavegador() {
+    val navController = rememberNavController()
+
+    NavHost(navController = navController, startDestination = Routes.NOTEBOOK_LIST) {
+        composable(Routes.NOTEBOOK_LIST) {
+            NotebookListScreen(
+                onNavigateToRecipeDetail = { recipeId ->
+                    navController.navigate(Routes.recipeDetailRoute(recipeId))
+                },
+                onNavigateToAddRecipe = { notebookId ->
+                    navController.navigate(Routes.addRecipeRoute(notebookId))
+                }
+            )
+        }
+
+        /*
+        // Rota não é mais necessária, pois a lista de receitas
+        // agora é exibida na NotebookListScreen.
+        composable(
+            route = Routes.RECIPE_LIST,
+            arguments = listOf(navArgument("notebookId") { type = NavType.LongType })
+        ) { backStackEntry ->
+            val notebookId = backStackEntry.arguments?.getLong("notebookId") ?: 0
+            RecipeListScreen(
+                onNavigateBack = { navController.popBackStack() },
+                onNavigateToRecipeDetail = { recipeId ->
+                    navController.navigate(Routes.recipeDetailRoute(recipeId))
+                },
+                onNavigateToAddRecipe = {
+                    navController.navigate(Routes.addRecipeRoute(notebookId))
+                }
+            )
+        }
+        */
+
+        composable(
+            route = Routes.RECIPE_DETAIL,
+            arguments = listOf(navArgument("recipeId") { type = NavType.LongType })
+        ) { backStackEntry ->
+            val recipeId = backStackEntry.arguments?.getLong("recipeId") ?: 0
+            RecipeDetailScreen(
+                onNavigateBack = { navController.popBackStack() },
+                onNavigateToEditRecipe = {
+                    navController.navigate(Routes.editRecipeRoute(recipeId))
+                }
+            )
+        }
+        composable(
+            route = Routes.ADD_RECIPE,
+            arguments = listOf(navArgument("notebookId") { type = NavType.LongType })
+        ) {
+            AddEditRecipeScreen(onNavigateBack = { navController.popBackStack() })
+        }
+        composable(
+            route = Routes.EDIT_RECIPE,
+            arguments = listOf(navArgument("recipeId") { type = NavType.LongType })
+        ) {
+            AddEditRecipeScreen(onNavigateBack = { navController.popBackStack() })
         }
     }
 }

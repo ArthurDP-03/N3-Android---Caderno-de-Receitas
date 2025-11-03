@@ -1,12 +1,26 @@
 package br.com.cadernoreceitas.data.local
 
 import androidx.room.TypeConverter
+import br.com.cadernoreceitas.data.model.Ingredient // Importa o novo modelo
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 
 class Converters {
     private val gson = Gson()
 
+    // --- Conversor para List<Ingredient> ---
+    @TypeConverter
+    fun fromIngredientList(value: List<Ingredient>): String {
+        return gson.toJson(value)
+    }
+
+    @TypeConverter
+    fun toIngredientList(value: String): List<Ingredient> {
+        val listType = object : TypeToken<List<Ingredient>>() {}.type
+        return gson.fromJson(value, listType)
+    }
+
+    // --- Conversor para List<String> (para os Passos) ---
     @TypeConverter
     fun fromStringList(value: List<String>): String {
         return gson.toJson(value)

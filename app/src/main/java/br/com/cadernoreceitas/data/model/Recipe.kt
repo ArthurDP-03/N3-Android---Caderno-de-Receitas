@@ -21,6 +21,7 @@ data class Recipe(
     val notebookId: Long,
     val name: String,
     val description: String,
-    val ingredients: List<String>,
+    // ATUALIZAÇÃO: Mudou de List<String> para List<Ingredient>
+    val ingredients: List<Ingredient>,
     val steps: List<String>
 )
