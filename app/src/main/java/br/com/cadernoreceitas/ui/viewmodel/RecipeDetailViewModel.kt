@@ -25,7 +25,7 @@ class RecipeDetailViewModel @Inject constructor(
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), null)
 
     /**
-     * NOVO: Função para deletar a receita atual.
+     * Função para deletar a receita atual.
      */
     fun deleteRecipe(onDeleteFinished: () -> Unit) {
         viewModelScope.launch {

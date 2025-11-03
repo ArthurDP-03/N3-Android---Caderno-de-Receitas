@@ -26,7 +26,6 @@ fun RecipeDetailScreen(
     val recipe by viewModel.recipe.collectAsState()
     var showDeleteDialog by remember { mutableStateOf(false) }
 
-    // Diálogo de confirmação para exclusão
     if (showDeleteDialog) {
         AlertDialog(
             onDismissRequest = { showDeleteDialog = false },
@@ -60,7 +59,6 @@ fun RecipeDetailScreen(
                     IconButton(onClick = onNavigateToEditRecipe) {
                         Icon(Icons.Default.Edit, "Editar Receita")
                     }
-                    // NOVO: Botão de Deletar
                     IconButton(onClick = { showDeleteDialog = true }) {
                         Icon(Icons.Default.Delete, "Excluir Receita")
                     }
@@ -70,7 +68,10 @@ fun RecipeDetailScreen(
     ) { padding ->
         recipe?.let {
             LazyColumn(
-                modifier = Modifier.fillMaxSize().padding(padding).padding(16.dp),
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(padding)
+                    .padding(16.dp),
                 verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {
                 item { Text(it.description, style = MaterialTheme.typography.bodyLarge) }
@@ -79,7 +80,6 @@ fun RecipeDetailScreen(
 
                 item { Text("Ingredientes:", style = MaterialTheme.typography.headlineSmall) }
                 items(it.ingredients) { ingredient ->
-                    // ATUALIZADO: Exibição formatada
                     val text = "${ingredient.quantity} ${ingredient.unit} - ${ingredient.name}"
                     Text(
                         text,

@@ -31,9 +31,10 @@ fun AddEditRecipeScreen(
         topBar = {
             TopAppBar(
                 title = { Text(if (uiState.name.isBlank()) "Nova Receita" else "Editar Receita") },
+                // Este é o botão "Cancelar" solicitado (Requisito 3)
                 navigationIcon = {
                     IconButton(onClick = onNavigateBack) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, "Voltar")
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, "Voltar/Cancelar")
                     }
                 }
             )
@@ -66,7 +67,6 @@ fun AddEditRecipeScreen(
                 modifier = Modifier.fillMaxWidth()
             )
 
-            // --- NOVO Formulário de Ingredientes ---
             Text("Ingredientes", style = MaterialTheme.typography.titleLarge)
 
             uiState.ingredients.forEachIndexed { index, ingredient ->
@@ -87,8 +87,6 @@ fun AddEditRecipeScreen(
                 Spacer(modifier = Modifier.width(8.dp))
                 Text("Adicionar Ingrediente")
             }
-            // --- Fim do Formulário de Ingredientes ---
-
 
             Text("Passo a passo (um por linha)", style = MaterialTheme.typography.titleLarge)
             OutlinedTextField(

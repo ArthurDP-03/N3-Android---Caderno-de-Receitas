@@ -11,19 +11,20 @@ import javax.inject.Singleton
 @Singleton
 class ReceitasRepository @Inject constructor(private val dao: ReceitasDao) {
 
-    // ATUALIZADO: Nova função para a tela principal
     fun getNotebooksWithRecipes(): Flow<List<NotebookWithRecipes>> = dao.getNotebooksWithRecipes()
 
     fun getNotebookById(notebookId: Long): Flow<Notebook> = dao.getNotebookById(notebookId)
     suspend fun insertNotebook(notebook: Notebook) = dao.insertNotebook(notebook)
 
+    // NOVO: Função para atualizar caderno
+    suspend fun updateNotebook(notebook: Notebook) = dao.updateNotebook(notebook)
+
+    // NOVO: Função para deletar caderno
+    suspend fun deleteNotebook(notebook: Notebook) = dao.deleteNotebook(notebook)
+
+
     fun getRecipeById(recipeId: Long): Flow<Recipe> = dao.getRecipeById(recipeId)
     suspend fun insertRecipe(recipe: Recipe) = dao.insertRecipe(recipe)
 
-    // NOVO: Função para deletar receita
     suspend fun deleteRecipe(recipe: Recipe) = dao.deleteRecipe(recipe)
-
-    // Funções antigas que não são mais necessárias para a nova tela principal
-    // fun getAllNotebooks(): Flow<List<Notebook>> = dao.getAllNotebooks()
-    // fun getRecipesForNotebook(notebookId: Long): Flow<List<Recipe>> = dao.getRecipesForNotebook(notebookId)
 }

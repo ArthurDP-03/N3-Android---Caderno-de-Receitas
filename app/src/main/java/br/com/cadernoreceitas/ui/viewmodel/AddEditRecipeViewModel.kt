@@ -38,9 +38,7 @@ class AddEditRecipeViewModel @Inject constructor(
                     it.copy(
                         name = recipe.name,
                         description = recipe.description,
-                        // ATUALIZADO: Carrega a lista de ingredientes
                         ingredients = recipe.ingredients.ifEmpty { listOf(Ingredient()) },
-                        // ATUALIZADO: Junta os passos com quebra de linha
                         steps = recipe.steps.joinToString("\n")
                     )
                 }
@@ -51,8 +49,6 @@ class AddEditRecipeViewModel @Inject constructor(
     fun onNameChange(name: String) = _uiState.update { it.copy(name = name) }
     fun onDescriptionChange(description: String) = _uiState.update { it.copy(description = description) }
     fun onStepsChange(steps: String) = _uiState.update { it.copy(steps = steps) }
-
-    // --- NOVAS Funções para Ingredientes ---
 
     fun onIngredientChange(index: Int, qty: String, unit: String, name: String) {
         _uiState.update { currentState ->
@@ -76,7 +72,6 @@ class AddEditRecipeViewModel @Inject constructor(
             val newIngredients = currentState.ingredients.toMutableList().apply {
                 removeAt(index)
             }
-            // Garante que sempre haja pelo menos um campo, mesmo que vazio
             if (newIngredients.isEmpty()) {
                 newIngredients.add(Ingredient())
             }
@@ -84,14 +79,11 @@ class AddEditRecipeViewModel @Inject constructor(
         }
     }
 
-    // --- Fim das Novas Funções ---
-
     fun saveRecipe(onSaveFinished: () -> Unit) {
         viewModelScope.launch {
             val currentState = _uiState.value
             val recipe = Recipe(
                 recipeId = if (isEditing) recipeId else 0,
-                // Corrigido: Busca o notebookId correto ao editar
                 notebookId = if (isEditing) {
                     repository.getRecipeById(recipeId).firstOrNull()?.notebookId ?: 0
                 } else {
@@ -99,9 +91,7 @@ class AddEditRecipeViewModel @Inject constructor(
                 },
                 name = currentState.name,
                 description = currentState.description,
-                // ATUALIZADO: Filtra ingredientes vazios
                 ingredients = currentState.ingredients.filter { it.name.isNotBlank() },
-                // ATUALIZADO: Salva os passos
                 steps = currentState.steps.split("\n").filter { it.isNotBlank() }
             )
             repository.insertRecipe(recipe)
@@ -113,7 +103,6 @@ class AddEditRecipeViewModel @Inject constructor(
 data class AddEditRecipeUiState(
     val name: String = "",
     val description: String = "",
-    // ATUALIZADO: O estado agora é uma lista de ingredientes
     val ingredients: List<Ingredient> = listOf(Ingredient()),
     val steps: String = ""
 )
