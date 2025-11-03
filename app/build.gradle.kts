@@ -3,21 +3,21 @@ plugins {
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
 
-    // ADICIONAR ESTES PLUGINS
+    // PLUGINS DO PROFESSOR (AGORA VAI FUNCIONAR)
+    kotlin("kapt")
     id("com.google.dagger.hilt.android")
-    id("com.google.devtools.ksp")
 }
-
 android {
-    namespace = "br.com.cadernoreceitas"
+    namespace = "br.com.cadernoreceitas" //
     compileSdk = 36
 
     defaultConfig {
-        applicationId = "br.com.cadernoreceitas"
+        applicationId = "br.com.cadernoreceitas" //
         minSdk = 24
         targetSdk = 36
         versionCode = 1
         versionName = "1.0"
+
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
@@ -43,6 +43,7 @@ android {
 }
 
 dependencies {
+    // Dependências base (corretas)
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.activity.compose)
@@ -52,27 +53,33 @@ dependencies {
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material3)
 
-    // Hilt (R4)
-    implementation("com.google.dagger:hilt-android:2.51.1")
-    ksp("com.google.dagger:hilt-compiler:2.51.1")
-
-    // Hilt Navigation (Compose)
-    implementation("androidx.hilt:hilt-navigation-compose:1.2.0")
-
-    // Navigation Compose (R1)
-    implementation("androidx.navigation:navigation-compose:2.8.0-beta06")
+    // Dependências do Professor (LiveData)
+    // implementation(libs.androidx.runtime.livedata) // <-- 1. APAGUE ESTA LINHA
+    implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.8.6") // <-- MANTENHA ESTA (está correta)
 
     // Room (R2)
     implementation("androidx.room:room-runtime:2.6.1")
     implementation("androidx.room:room-ktx:2.6.1")
-    ksp("androidx.room:room-compiler:2.6.1")
+    kapt("androidx.room:room-compiler:2.6.1") // <-- Isso vai parar de dar erro
 
-    // ViewModel (R3)
-    implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.9.0")
+    // Lifecycle + ViewModel (R3)
+    implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.8.6")
+    implementation("androidx.lifecycle:lifecycle-runtime-compose:2.8.6")
+    implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.8.6")
 
-    // Gson (Para TypeConverter do Room)
+    // Navigation Compose (R1)
+    // implementation(libs.androidx.navigation.compose) // <-- 2. APAGUE ESTA LINHA
+    implementation("androidx.navigation:navigation-compose:2.8.2") // <-- MANTENHA ESTA (está correta)
+
+    // Hilt (R4)
+    implementation("com.google.dagger:hilt-android:2.52")
+    kapt("com.google.dagger:hilt-compiler:2.52") // <-- Isso vai parar de dar erro
+    implementation("androidx.hilt:hilt-navigation-compose:1.2.0")
+
+    // Gson (Mantenha, você precisa dela para os Converters)
     implementation("com.google.code.gson:gson:2.10.1")
 
+    // Testes
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -82,6 +89,4 @@ dependencies {
     debugImplementation(libs.androidx.ui.test.manifest)
 }
 
-ksp {
-    arg("dagger.fastInit", "true")
-}
+
