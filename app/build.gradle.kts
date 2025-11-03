@@ -10,13 +10,13 @@ plugins {
 android {
     // Mude "br.com.meuapp" para o namespace real do seu app (ex: "br.com.cadernoreceitas")
     namespace = "br.com.cadernoreceitas"
-    compileSdk = 34
+    compileSdk = 35
 
     defaultConfig {
         // Mude "br.com.meuapp" para o ID real do seu app (ex: "br.com.cadernoreceitas")
         applicationId = "br.com.cadernoreceitas"
         minSdk = 26
-        targetSdk = 34
+        targetSdk = 35
         versionCode = 1
         versionName = "1.0"
 
@@ -73,6 +73,7 @@ dependencies {
 
     // Hilt (Injeção de Dependência)
     implementation(libs.hilt.android)
+    implementation(libs.androidx.navigation.compose)
     kapt(libs.hilt.compiler)
 
     // ADICIONE O ROOM (Banco de Dados)
