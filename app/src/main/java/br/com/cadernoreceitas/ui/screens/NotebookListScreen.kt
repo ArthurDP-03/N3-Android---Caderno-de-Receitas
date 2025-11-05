@@ -59,7 +59,9 @@ fun NotebookListScreen(
         if (showAddNotebookDialog) {
             AddOrEditNotebookDialog(
                 onDismiss = { showAddNotebookDialog = false },
-                onConfirm = { name -> viewModel.addNotebook(name) },
+                onConfirm = {
+                    name -> viewModel.addNotebook(name)
+                    showAddNotebookDialog = false },
                 dialogTitle = "Novo Caderno",
                 textFieldLabel = "Nome do Caderno"
             )
@@ -71,6 +73,7 @@ fun NotebookListScreen(
                 onDismiss = { notebookToEdit = null },
                 onConfirm = { newName ->
                     viewModel.updateNotebookName(notebook, newName)
+                    notebookToEdit = null
                 },
                 dialogTitle = "Editar Caderno",
                 textFieldLabel = "Novo nome",
